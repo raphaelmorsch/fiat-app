@@ -4,7 +4,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import datetime
 
 app = Flask(__name__)
-app.secret_key = os.getenv('FLASK_SECRET_KEY', 'fiat-demo-secret-key')
+
+# Configuração para OpenShift - usa variáveis de ambiente
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'fiat-demo-secret-key-openshift')
 
 # Configuração do banco de dados
 DB_CONFIG = {
@@ -23,7 +25,8 @@ def get_db_connection():
             port=DB_CONFIG['port'],
             database=DB_CONFIG['database'],
             user=DB_CONFIG['user'],
-            password=DB_CONFIG['password']
+            password=DB_CONFIG['password'],
+            connect_timeout=10
         )
         conn.set_client_encoding('UTF8')
         return conn
@@ -217,4 +220,14 @@ def info():
     """
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=False)
+    # Configuração para OpenShift
+    port = int(os.getenv('PORT', 8080))
+    host = os.getenv('HOST', '0.0.0.0')
+    
+    # Use Gunicorn se disponível, senão use Flask dev server
+    if os.getenv('OPENSHIFT_BUILD_NAME'):
+        # Em produção no OpenShift
+        app.run(host=host, port=port, debug=False)
+    else:
+        # Em desenvolvimento
+        app.run(host=host, port=port, debug=True)

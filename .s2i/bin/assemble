@@ -1,9 +1,13 @@
 #!/bin/bash
 echo "---> Installing application source..."
-cp -Rf /tmp/src/. ./
+
+# Copia o código fonte para o diretório de trabalho do usuário 1001
+cp -Rf /tmp/src/. ${APP_ROOT}/src/
 
 echo "---> Installing Python dependencies..."
-pip install -r requirements.txt
+cd ${APP_ROOT}/src
 
-echo "---> Fixing permissions..."
-fix-permissions /opt/app-root/src
+# Instala dependências como usuário 1001
+pip install --user -r requirements.txt
+
+echo "---> Application setup completed"
