@@ -1,8 +1,21 @@
 #!/bin/bash
 echo "--> Starting application..."
 
-APP_DIR="/opt/app-root/myapp"
-cd ${APP_DIR}
+# Configura o PATH para incluir binários do usuário
+export PATH="$HOME/.local/bin:$PATH"
 
-# Usa Python diretamente - ESQUECE GUNICORN
-exec python app.py
+# A aplicação deve estar no working directory atual
+echo "--> Current directory: $(pwd)"
+echo "--> Contents:"
+ls -la
+
+# Verifica se podemos acessar a aplicação
+if [ -f "app.py" ]; then
+    echo "--> Starting Flask application..."
+    exec python app.py
+else
+    echo "ERROR: app.py not found in $(pwd)"
+    echo "Available files:"
+    ls -la
+    exit 1
+fi

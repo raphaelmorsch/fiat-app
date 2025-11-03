@@ -1,34 +1,29 @@
 #!/bin/bash
-echo "--> FIXING THIS BULLSHIT ONCE AND FOR ALL..."
+echo "--> Starting S2I build..."
 
-# PATHS ABSOLUTOS - SEM VARIÁVEIS
-APP_DIR="/opt/app-root/myapp"
-LOCAL_DIR="/opt/app-root/.local"
+# O S2I Python já deve ter preparado o ambiente
+# Vamos ver o que temos disponível
+echo "--> Current directory: $(pwd)"
+echo "--> Home directory: $HOME"
+echo "--> User: $(whoami)"
+echo "--> User ID: $(id)"
 
-# Limpa e cria diretórios como ROOT se necessário, depois ajusta permissões
-if [ $(whoami) = "root" ]; then
-    echo "--> Running as root, setting up directories..."
-    mkdir -p ${APP_DIR} ${LOCAL_DIR}
-    chown -R 1001:0 /opt/app-root
-    chmod -R g+rw /opt/app-root
+# Lista o que temos no /tmp
+echo "--> Contents of /tmp:"
+ls -la /tmp/
+
+# O código está em /tmp/src - vamos trabalhar DE LÁ MESMO
+if [ -d "/tmp/src" ]; then
+    echo "--> Working from /tmp/src directory..."
+    cd /tmp/src
+    
+    echo "--> Installing dependencies from current directory..."
+    pip install --user -r requirements.txt
+    
+    echo "--> Dependencies installed successfully!"
 else
-    echo "--> Running as user, using existing directories..."
-    # Usa diretórios que já devem existir
-    mkdir -p ${APP_DIR} ${LOCAL_DIR} 2>/dev/null || true
+    echo "ERROR: /tmp/src directory not found!"
+    exit 1
 fi
 
-# Copia a aplicação
-echo "--> Copying application..."
-cp -Rf /tmp/src/. ${APP_DIR}/
-
-# Vai para o diretório da aplicação
-cd ${APP_DIR}
-
-echo "--> Installing Python packages..."
-# Instala SEM --user e SEM --target
-pip install --no-cache-dir -r requirements.txt
-
-echo "--> Verification..."
-pip list | grep -E "(Flask|psycopg2)"
-
-echo "--> SUCCESS! Application ready."
+echo "--> Build completed!"
