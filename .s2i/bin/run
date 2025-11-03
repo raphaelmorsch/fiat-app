@@ -1,3 +1,10 @@
 #!/bin/bash
-echo "---> Starting Flask application with Gunicorn..."
-exec gunicorn -b 0.0.0.0:8080 app:app
+echo "---> Starting Flask application..."
+
+APP_DIR="/tmp/app"
+cd ${APP_DIR}
+
+# Configura PATH para binários do usuário
+export PATH="${HOME}/.local/bin:${PATH}"
+
+exec python app.py

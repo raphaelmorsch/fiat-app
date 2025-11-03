@@ -1,19 +1,16 @@
 #!/bin/bash
 echo "---> Installing application source..."
 
-# Cria diretório de trabalho se não existir
-mkdir -p /opt/app-root/src
+# Usa /tmp que sempre tem permissão writeable
+APP_DIR="/tmp/app"
 
-# Copia os arquivos
-cp -Rf /tmp/src/. /opt/app-root/src/ 2>/dev/null || :
+mkdir -p ${APP_DIR}
+cp -Rf /tmp/src/. ${APP_DIR}/
 
 echo "---> Installing Python dependencies..."
-cd /opt/app-root/src
+cd ${APP_DIR}
 
-# Instala no diretório home do usuário
-export PIP_TARGET="/opt/app-root/src/.local"
-export PATH="/opt/app-root/src/.local/bin:${PATH}"
-
-pip install --no-cache-dir -r requirements.txt
+# Instala dependências
+pip install --user --no-cache-dir -r requirements.txt
 
 echo "---> Application setup completed"
