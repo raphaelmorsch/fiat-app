@@ -1,18 +1,14 @@
 #!/bin/bash
 echo "--> Starting S2I build..."
 
-# O problema: HOME está como '/' - vamos definir explicitamente
-export HOME="/opt/app-root"
-export PYTHONUSERBASE="${HOME}/.local"
-export PATH="${HOME}/.local/bin:${PATH}"
-
-# Cria diretórios necessários
-mkdir -p ${HOME}/.local
+# NÃO tenta criar diretórios, NÃO define HOME
+# Apenas usa o que o S2I já fornece
 
 echo "--> Working from /tmp/src..."
 cd /tmp/src
 
-echo "--> Installing dependencies..."
-pip install --user -r requirements.txt
+echo "--> Installing dependencies WITHOUT --user flag..."
+# Instala SEM --user - deixa o pip decidir onde instalar
+pip install -r requirements.txt
 
 echo "--> Build completed successfully!"

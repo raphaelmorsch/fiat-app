@@ -1,17 +1,15 @@
 #!/bin/bash
 echo "--> Starting application..."
 
-# Configura o ambiente igual ao assemble
-export HOME="/opt/app-root" 
-export PYTHONUSERBASE="${HOME}/.local"
-export PATH="${HOME}/.local/bin:${PATH}"
+# O S2I Python já deve ter configurado o ambiente
+# Apenas executa a aplicação
 
 echo "--> Current directory: $(pwd)"
 echo "--> Contents:"
 ls -la
 
 if [ -f "app.py" ]; then
-    echo "--> Starting Flask..."
+    echo "--> Starting Flask application..."
     exec python app.py
 else
     echo "ERROR: app.py not found!"
