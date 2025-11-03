@@ -1,15 +1,14 @@
 #!/bin/bash
 echo "--> Starting S2I build..."
 
-# NÃO tenta criar diretórios, NÃO define HOME
-# Apenas usa o que o S2I já fornece
-
 echo "--> Working from /tmp/src..."
 cd /tmp/src
 
-echo "--> Installing dependencies WITHOUT --user flag..."
-# Instala SEM --user - deixa o pip decidir onde instalar
+echo "--> Installing dependencies..."
 pip install --no-cache-dir --target=/opt/app-root/lib/python3.9/site-packages -r requirements.txt
 
+echo "--> Copying application source to /opt/app-root/src..."
+mkdir -p /opt/app-root/src
+cp -r . /opt/app-root/src
 
 echo "--> Build completed successfully!"
