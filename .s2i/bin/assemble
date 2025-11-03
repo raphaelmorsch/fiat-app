@@ -9,6 +9,7 @@ cd /tmp/src
 
 echo "--> Installing dependencies WITHOUT --user flag..."
 # Instala SEM --user - deixa o pip decidir onde instalar
-pip install -r requirements.txt
+pip install --no-cache-dir --target=/opt/app-root/lib/python3.9/site-packages -r requirements.txt
+
 
 echo "--> Build completed successfully!"
