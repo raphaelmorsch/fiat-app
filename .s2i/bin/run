@@ -1,18 +1,8 @@
 #!/bin/bash
-echo "--> Starting Flask application..."
+echo "--> Starting application..."
 
-# Configura o ambiente
-export PYTHONUSERBASE=${HOME}/.local
-export PATH=${HOME}/.local/bin:${PATH}
+APP_DIR="/opt/app-root/myapp"
+cd ${APP_DIR}
 
-# Vai para o diretório da aplicação
-cd ${HOME}/app
-
-# Verifica se o Gunicorn está disponível
-if [ -f "${HOME}/.local/bin/gunicorn" ]; then
-    echo "--> Starting with Gunicorn..."
-    exec ${HOME}/.local/bin/gunicorn -b 0.0.0.0:8080 app:app
-else
-    echo "--> WARNING: Gunicorn not found, using Flask development server..."
-    exec python app.py
-fi
+# Usa Python diretamente - ESQUECE GUNICORN
+exec python app.py

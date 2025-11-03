@@ -1,26 +1,34 @@
 #!/bin/bash
-echo "--> Solving this damn permission issue once and for all..."
+echo "--> FIXING THIS BULLSHIT ONCE AND FOR ALL..."
 
-# Configura variáveis de ambiente CRÍTICAS
-export PYTHONUSERBASE=${HOME}/.local
-export PATH=${HOME}/.local/bin:${PATH}
-export PIP_TARGET=${HOME}/.local
+# PATHS ABSOLUTOS - SEM VARIÁVEIS
+APP_DIR="/opt/app-root/myapp"
+LOCAL_DIR="/opt/app-root/.local"
 
-# Cria diretórios necessários
-mkdir -p ${HOME}/app ${HOME}/.local/bin
+# Limpa e cria diretórios como ROOT se necessário, depois ajusta permissões
+if [ $(whoami) = "root" ]; then
+    echo "--> Running as root, setting up directories..."
+    mkdir -p ${APP_DIR} ${LOCAL_DIR}
+    chown -R 1001:0 /opt/app-root
+    chmod -R g+rw /opt/app-root
+else
+    echo "--> Running as user, using existing directories..."
+    # Usa diretórios que já devem existir
+    mkdir -p ${APP_DIR} ${LOCAL_DIR} 2>/dev/null || true
+fi
 
-# Copia a aplicação para onde TEMOS permissão
-echo "--> Copying application to ${HOME}/app/"
-cp -Rf /tmp/src/. ${HOME}/app/
+# Copia a aplicação
+echo "--> Copying application..."
+cp -Rf /tmp/src/. ${APP_DIR}/
 
 # Vai para o diretório da aplicação
-cd ${HOME}/app
+cd ${APP_DIR}
 
-echo "--> Installing Python packages with explicit user base..."
-# FORÇA a instalação no diretório correto
-pip install --user --no-cache-dir -r requirements.txt
+echo "--> Installing Python packages..."
+# Instala SEM --user e SEM --target
+pip install --no-cache-dir -r requirements.txt
 
-echo "--> Verifying installations..."
-${HOME}/.local/bin/pip list | grep -E "(Flask|gunicorn|psycopg2)"
+echo "--> Verification..."
+pip list | grep -E "(Flask|psycopg2)"
 
-echo "--> Application setup COMPLETED successfully!"
+echo "--> SUCCESS! Application ready."
