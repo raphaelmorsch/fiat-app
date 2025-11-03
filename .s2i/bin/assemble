@@ -1,13 +1,21 @@
 #!/bin/bash
 echo "---> Installing application source..."
 
-# Copia o código fonte para o diretório de trabalho do usuário 1001
-cp -Rf /tmp/src/. ${APP_ROOT}/src/
+# Copia para um diretório com permissões adequadas
+cp -Rf /tmp/src/. ${HOME}/src/ 2>/dev/null || :
+cp -Rf /tmp/src/. /opt/app-root/src/ 2>/dev/null || :
 
 echo "---> Installing Python dependencies..."
-cd ${APP_ROOT}/src
+cd /opt/app-root/src
 
-# Instala dependências como usuário 1001
-pip install --user -r requirements.txt
+if [ -f "requirements.txt" ]; then
+    pip install --user --no-cache-dir -r requirements.txt
+else
+    echo "WARNING: requirements.txt not found"
+    pip install --user --no-cache-dir Flask psycopg2-binary
+fi
+
+echo "---> Fixing permissions..."
+chmod -R g+rw /opt/app-root/src 2>/dev/null || :
 
 echo "---> Application setup completed"
