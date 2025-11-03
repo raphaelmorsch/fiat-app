@@ -1,16 +1,26 @@
 #!/bin/bash
-echo "---> Installing application source..."
+echo "--> Solving this damn permission issue once and for all..."
 
-# Usa /tmp que sempre tem permissão writeable
-APP_DIR="/tmp/app"
+# Configura variáveis de ambiente CRÍTICAS
+export PYTHONUSERBASE=${HOME}/.local
+export PATH=${HOME}/.local/bin:${PATH}
+export PIP_TARGET=${HOME}/.local
 
-mkdir -p ${APP_DIR}
-cp -Rf /tmp/src/. ${APP_DIR}/
+# Cria diretórios necessários
+mkdir -p ${HOME}/app ${HOME}/.local/bin
 
-echo "---> Installing Python dependencies..."
-cd ${APP_DIR}
+# Copia a aplicação para onde TEMOS permissão
+echo "--> Copying application to ${HOME}/app/"
+cp -Rf /tmp/src/. ${HOME}/app/
 
-# Instala dependências
+# Vai para o diretório da aplicação
+cd ${HOME}/app
+
+echo "--> Installing Python packages with explicit user base..."
+# FORÇA a instalação no diretório correto
 pip install --user --no-cache-dir -r requirements.txt
 
-echo "---> Application setup completed"
+echo "--> Verifying installations..."
+${HOME}/.local/bin/pip list | grep -E "(Flask|gunicorn|psycopg2)"
+
+echo "--> Application setup COMPLETED successfully!"
