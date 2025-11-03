@@ -1,29 +1,18 @@
 #!/bin/bash
 echo "--> Starting S2I build..."
 
-# O S2I Python já deve ter preparado o ambiente
-# Vamos ver o que temos disponível
-echo "--> Current directory: $(pwd)"
-echo "--> Home directory: $HOME"
-echo "--> User: $(whoami)"
-echo "--> User ID: $(id)"
+# O problema: HOME está como '/' - vamos definir explicitamente
+export HOME="/opt/app-root"
+export PYTHONUSERBASE="${HOME}/.local"
+export PATH="${HOME}/.local/bin:${PATH}"
 
-# Lista o que temos no /tmp
-echo "--> Contents of /tmp:"
-ls -la /tmp/
+# Cria diretórios necessários
+mkdir -p ${HOME}/.local
 
-# O código está em /tmp/src - vamos trabalhar DE LÁ MESMO
-if [ -d "/tmp/src" ]; then
-    echo "--> Working from /tmp/src directory..."
-    cd /tmp/src
-    
-    echo "--> Installing dependencies from current directory..."
-    pip install --user -r requirements.txt
-    
-    echo "--> Dependencies installed successfully!"
-else
-    echo "ERROR: /tmp/src directory not found!"
-    exit 1
-fi
+echo "--> Working from /tmp/src..."
+cd /tmp/src
 
-echo "--> Build completed!"
+echo "--> Installing dependencies..."
+pip install --user -r requirements.txt
+
+echo "--> Build completed successfully!"

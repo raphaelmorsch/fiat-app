@@ -1,21 +1,19 @@
 #!/bin/bash
 echo "--> Starting application..."
 
-# Configura o PATH para incluir binários do usuário
-export PATH="$HOME/.local/bin:$PATH"
+# Configura o ambiente igual ao assemble
+export HOME="/opt/app-root" 
+export PYTHONUSERBASE="${HOME}/.local"
+export PATH="${HOME}/.local/bin:${PATH}"
 
-# A aplicação deve estar no working directory atual
 echo "--> Current directory: $(pwd)"
 echo "--> Contents:"
 ls -la
 
-# Verifica se podemos acessar a aplicação
 if [ -f "app.py" ]; then
-    echo "--> Starting Flask application..."
+    echo "--> Starting Flask..."
     exec python app.py
 else
-    echo "ERROR: app.py not found in $(pwd)"
-    echo "Available files:"
-    ls -la
+    echo "ERROR: app.py not found!"
     exit 1
 fi
