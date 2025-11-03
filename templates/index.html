@@ -1,0 +1,62 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Catálogo de Veículos</h2>
+    <a href="{{ url_for('novo_veiculo') }}" class="btn btn-primary">Novo Veículo</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Modelo</th>
+                        <th>Ano</th>
+                        <th>Cor</th>
+                        <th>Preço</th>
+                        <th>Data Fabricação</th>
+                        <th>Disponível</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for veiculo in veiculos %}
+                    <tr>
+                        <td>{{ veiculo[0] }}</td>
+                        <td><strong>{{ veiculo[1] }}</strong></td>
+                        <td>{{ veiculo[2] }}</td>
+                        <td>{{ veiculo[3] }}</td>
+                        <td>R$ {{ "%.2f"|format(veiculo[4]) }}</td>
+                        <td>{{ veiculo[5] }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if veiculo[6] else 'secondary' }}">
+                                {{ 'Sim' if veiculo[6] else 'Não' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('editar_veiculo', id=veiculo[0]) }}" 
+                               class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a href="{{ url_for('deletar_veiculo', id=veiculo[0]) }}" 
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Tem certeza que deseja deletar este veículo?')">Deletar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 p-3 bg-light rounded">
+    <h6>Informações do Sistema:</h6>
+    <small class="text-muted">
+        Esta aplicação está rodando em containers no OpenShift e consumindo dados do PostgreSQL 
+        em uma VM RHEL 6 através do OpenShift Virtualization.
+    </small>
+</div>
+{% endblock %}

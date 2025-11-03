@@ -1,0 +1,63 @@
+<!-- templates/editar_veiculo.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4>Editar Veículo - {{ veiculo[1] }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="modelo" class="form-label">Modelo</label>
+                        <input type="text" class="form-control" id="modelo" name="modelo" 
+                               value="{{ veiculo[1] }}" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ano" class="form-label">Ano</label>
+                                <input type="number" class="form-control" id="ano" name="ano" 
+                                       value="{{ veiculo[2] }}" min="1990" max="2030" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cor" class="form-label">Cor</label>
+                                <input type="text" class="form-control" id="cor" name="cor" 
+                                       value="{{ veiculo[3] }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="preco" class="form-label">Preço</label>
+                        <input type="number" step="0.01" class="form-control" id="preco" name="preco" 
+                               value="{{ veiculo[4] }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="data_fabricacao" class="form-label">Data de Fabricação</label>
+                        <input type="date" class="form-control" id="data_fabricacao" name="data_fabricacao" 
+                               value="{{ veiculo[5] }}" required>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="disponivel" name="disponivel" 
+                               {{ 'checked' if veiculo[6] }}>
+                        <label class="form-check-label" for="disponivel">Disponível para venda</label>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Atualizar Veículo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

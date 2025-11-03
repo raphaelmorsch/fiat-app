@@ -1,0 +1,9 @@
+#!/bin/bash
+echo "---> Installing application source..."
+cp -Rf /tmp/src/. ./
+
+echo "---> Installing Python dependencies..."
+pip install -r requirements.txt
+
+echo "---> Fixing permissions..."
+fix-permissions /opt/app-root/src
