@@ -10,11 +10,10 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', 'fiat-demo-secret-key-openshift')
 
 # Configuração do banco de dados
 DB_CONFIG = {
-    'host': os.getenv('DB_HOST', 'postgres-vm-service'),
+    'host': os.getenv('DB_HOST', 'rhel610-postgres'),
     'port': os.getenv('DB_PORT', '5432'),
     'database': os.getenv('DB_NAME', 'fiat_legacy'),
-    'user': os.getenv('DB_USER', 'fiat_user'),
-    'password': os.getenv('DB_PASSWORD', 'fiat123')
+    'user': os.getenv('DB_USER', 'postgres')
 }
 
 def get_db_connection():
