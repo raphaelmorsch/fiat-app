@@ -13,7 +13,8 @@ DB_CONFIG = {
     'host': os.getenv('DB_HOST', 'rhel610-postgres'),
     'port': os.getenv('DB_PORT', '5432'),
     'database': os.getenv('DB_NAME', 'fiat_legacy'),
-    'user': os.getenv('DB_USER', 'postgres')
+    'user': os.getenv('DB_USER', 'fiat_user'),
+    'password': os.getenv('DB_PASSWORD', 'fiat123')
 }
 
 def get_db_connection():
