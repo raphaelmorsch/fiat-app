@@ -1,0 +1,93 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: rhel610-05-replica # NOVO NOME para a réplica
+  namespace: default
+  labels:
+    app: rhel610-05-replica # Novo rótulo
+    vm.kubevirt.io/template: rhel7-server-small
+    vm.kubevirt.io/template.namespace: openshift
+    vm.kubevirt.io/template.revision: '1'
+    vm.kubevirt.io/template.version: v0.32.2
+spec:
+  dataVolumeTemplates:
+    - apiVersion: cdi.kubevirt.io/v1beta1
+      kind: DataVolume
+      metadata:
+        annotations:
+          cdi.kubevirt.io/storage.bind.immediate.requested: 'true'
+        name: rhel610-05-replica # NOVO NOME para o DataVolume
+      spec:
+        source:
+          blank: {} # O DataVolume começará em branco, assim como o original
+        storage:
+          resources:
+            requests:
+              storage: 30Gi
+  runStrategy: RerunOnFailure
+  template:
+    metadata:
+      annotations:
+        vm.kubevirt.io/flavor: small
+        vm.kubevirt.io/os: rhel7
+        vm.kubevirt.io/workload: server
+      labels:
+        kubevirt.io/domain: rhel610-05-replica # Novo domínio
+        kubevirt.io/size: small
+        network.kubevirt.io/headlessService: headless
+    spec:
+      accessCredentials:
+        - sshPublicKey:
+            propagationMethod:
+              noCloud: {}
+            source:
+              secret:
+                secretName: ssh-key-rhel6
+      architecture: amd64
+      domain:
+        cpu:
+          cores: 1
+          sockets: 3
+          threads: 1
+        devices:
+          disks:
+            - bootOrder: 2
+              disk:
+                bus: virtio
+              name: rootdisk
+            - bootOrder: 3
+              disk:
+                bus: virtio
+              name: cloudinitdisk
+          interfaces:
+            - macAddress: '02:4b:0e:00:00:05' # Manter o MAC address pode causar conflitos se a VM original estiver ativa. Considere remover ou mudar.
+              masquerade: {}
+              model: virtio
+              name: default
+              ports:
+                - name: ssh
+                  port: 22
+                - name: postgres
+                  port: 5432
+          rng: {}
+          useVirtioTransitional: true
+        machine:
+          type: pc-q35-rhel9.4.0
+        memory:
+          guest: 6Gi
+        resources: {}
+      networks:
+        - name: default
+          pod: {}
+      terminationGracePeriodSeconds: 180
+      volumes:
+        - dataVolume:
+            name: rhel610-05-replica # Referencia o novo DataVolume
+          name: rootdisk
+        - cloudInitNoCloud:
+            userData: |-
+              #cloud-config
+              user: cloud-user
+              password: 1fwo-xt60-srjs
+              chpasswd: { expire: False }
+          name: cloudinitdisk
